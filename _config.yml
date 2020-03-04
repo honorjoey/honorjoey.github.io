@@ -99,16 +99,13 @@ service-worker: true
 # Friends
 friends: [
     {
-        title: "WY",
-        href: "http://zhengwuyang.com"
+        title: "HonorJoey CSDN",
+        href: "https://blog.csdn.net/qq_22157427"
     },{
-        title: "简书·BY",
-        href: "http://www.jianshu.com/u/e71990ada2fd"
+        title: "Go语言中文网",
+        href: "https://studygolang.com/"
     },{
-        title: "Apple",
-        href: "https://apple.com"
-    },{
-        title: "Apple Developer",
-        href: "https://developer.apple.com/"
+        title: "Go",
+        href: "https://golang.org/"
     }
 ]
