@@ -10,7 +10,6 @@ tags:								#标签
     - ubuntu
     - linux
 ---
-### 安装ssh工具
 #### 获取root权限
 ```
 sudo su
