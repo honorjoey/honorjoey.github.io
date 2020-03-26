@@ -99,9 +99,6 @@ service-worker: true
 # Friends
 friends: [
     {
-        title: "HonorJoey CSDN",
-        href: "https://blog.csdn.net/qq_22157427"
-    },{
         title: "Go语言中文网",
         href: "https://studygolang.com/"
     },{
