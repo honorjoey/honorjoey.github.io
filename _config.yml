@@ -104,5 +104,8 @@ friends: [
     },{
         title: "Go",
         href: "https://golang.org/"
+    },{
+        title: "武汉大学密码学与区块链技术实验室",
+        href: "http://blockchain.whu.edu.cn/"
     }
 ]
