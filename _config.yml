@@ -1,7 +1,7 @@
 # Site settings
 title: HonorJoey Blog
 SEOTitle: HonorJoey的博客 | HonorJoey Blog
-header-img: img/post-bg-desk.jpg
+header-img: img/post-bg-computer.jpg
 email: james293@126.com
 description: "Every failure is leading towards success."
 keyword: "HonorJoey, HonorJoey Blog, HonorJoey的博客, Joey, Go, BlockChain, Python"
@@ -18,8 +18,8 @@ sidebar-avatar: /img/about-HJ-gentle.jpg      # use absolute URL, seeing it's us
 
 # SNS settings
 RSS: false
-weibo_username:     honorjoey
-zhihu_username:     honorjoey
+#weibo_username:     honorjoey
+#zhihu_username:     honorjoey
 github_username:    honorjoey
 #facebook_username:  honorjoey
 jianshu_username:   4d3979691dfc
