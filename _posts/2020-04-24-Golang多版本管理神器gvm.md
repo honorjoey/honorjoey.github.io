@@ -45,7 +45,7 @@ Please restart your terminal session or to get started right away run
 
 提醒下，不同操作系统还需要相应的依赖项要装，具体查看 项目说明 的介绍。
 
-安装可能遇到的坑:
+**安装可能遇到的坑**
 
 ```bash
 $ gvm  install go1.12.10
@@ -100,6 +100,37 @@ gvm use go1.12
 
 ```
 gvm use go1.12 --default
+```
+
+**使用遇到的问题**
+
+当下次打开终端时，可能会出现`zsh: command not found: gvm`， 可以再在终端运行
+
+
+```
+source ~/.gvm/scripts/gvm
+```
+
+避免每次都要如此操作，可以
+
+
+```
+cat ~/.gvm/scripts/gvm
+```
+
+然后将上述文件中的内容加入`~/.bashrc`或`~/.profile`，然后使修改生效
+
+```
+cat ~/.gvm/scripts/gvm >> ~/.bashrc
+source ~/.bashrc
+```
+
+或
+
+
+```
+cat ~/.gvm/scripts/gvm >> ~/.profile
+source ~/.profile
 ```
 
 ### 包环境管理
