@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      分布式算法-Paxos算法(二)Multi-Paxos
+title:      分布式-Paxos算法(二)Multi-Paxos
 subtitle:   分布式协议与算法之Paxos算法第二篇
 date:       2020-07-03
 author:     HonorJoey
