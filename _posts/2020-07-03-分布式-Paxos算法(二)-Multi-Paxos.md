@@ -21,7 +21,9 @@ Basic Paxos 只能就单个值（Value）达成共识，一旦遇到为一系列
 
 Basic Paxos 是通过二阶段提交来达成共识的。在第一阶段，也就是准备阶段，接收到大多数准备响应的提议者，才能发起接受请求进入第二阶段（也就是接受阶段）：
 
-![image](https://static001.geekbang.org/resource/image/aa/e0/aafabff1fe2a26523e9815805ccca6e0.jpg)<center>图1</center>
+<!--![image](https://static001.geekbang.org/resource/image/aa/e0/aafabff1fe2a26523e9815805ccca6e0.jpg)<center>图1</center> -->
+
+![](http://honorjoey.top/img/blog/paxos_08.jpg)<center>图1</center>
 
 而如果我们直接通过多次执行 Basic Paxos 实例，来实现一系列值的共识，就会存在这样几个问题：
 - 如果多个提议者同时提交提案，可能出现因为提案编号冲突，在准备阶段没有提议者接收到大多数准备响应，协商失败，需要重新协商。你想象一下，一个 5 节点的集群，如果 3 个节点作为提议者同时提案，就可能发生因为没有提议者接收大多数响应（比如 1 个提议者接收到 1 个准备响应，另外 2 个提议者分别接收到 2 个准备响应）而准备失败，需要重新协商。
@@ -33,7 +35,9 @@ Basic Paxos 是通过二阶段提交来达成共识的。在第一阶段，也�
 
 我们可以通过引入领导者节点，也就是说，领导者节点作为唯一提议者，这样就不存在多个提议者同时提交提案的情况，也就不存在提案冲突的情况了：
 
-![image](https://static001.geekbang.org/resource/image/af/f6/af3d6a291d960ace59a88898abb74ef6.jpg)<center>图2</center>
+<!-- ![image](https://static001.geekbang.org/resource/image/af/f6/af3d6a291d960ace59a88898abb74ef6.jpg)<center>图2</center> -->
+
+![](http://honorjoey.top/img/blog/paxos_09.jpg)<center>图2</center>
 
 在论文中，**兰伯特没有说如何选举领导者，需要我们在实现 Multi-Paxos 算法的时候自己实现**。 比如在 Chubby 中，主节点（也就是领导者节点）是通过执行 Basic Paxos 算法，进行投票选举产生的。那么，如何解决第二个问题，也就是如何优化 Basic Paxos 执行呢？
 
@@ -41,7 +45,9 @@ Basic Paxos 是通过二阶段提交来达成共识的。在第一阶段，也�
 
 “当领导者处于稳定状态时，省掉准备阶段，直接进入接受阶段”这个优化机制，优化 Basic Paxos 执行。也就是说，领导者节点上，序列中的命令是最新的，不再需要通过准备请求来发现之前被大多数节点通过的提案，领导者可以独立指定提案中的值。这时，领导者在提交命令时，可以省掉准备阶段，直接进入到接受阶段：
 
-![image](https://static001.geekbang.org/resource/image/3c/54/3cd72a4a138fe1cde52aedd1b897f954.jpg)<center>图3</center>
+<!-- ![image](https://static001.geekbang.org/resource/image/3c/54/3cd72a4a138fe1cde52aedd1b897f954.jpg)<center>图3</center> -->
+
+![](http://honorjoey.top/img/blog/paxos_10.jpg)<center>图3</center>
 
 和重复执行 Basic Paxos 相比，Multi-Paxos 引入领导者节点之后，因为只有领导者节点一个提议者，只有它说了算，所以就不存在提案冲突。另外，当主节点处于稳定状态时，就省掉准备阶段，直接进入接受阶段，所以在很大程度上减少了往返的消息数，提升了性能，降低了延迟。
 
@@ -61,11 +67,15 @@ Basic Paxos 是通过二阶段提交来达成共识的。在第一阶段，也�
 
 - 所有的读请求和写请求都由主节点来处理。当主节点从客户端接收到写请求后，作为提议者，执行 Basic Paxos 实例，将数据发送给所有的节点，并且在大多数的服务器接受了这个写请求之后，再响应给客户端成功：
 
-![image](https://static001.geekbang.org/resource/image/7e/b9/7e2c2e194d5a0fda5594c5e4e2d9ecb9.jpg)<center>图4</center>
+<!-- ![image](https://static001.geekbang.org/resource/image/7e/b9/7e2c2e194d5a0fda5594c5e4e2d9ecb9.jpg)<center>图4</center> -->
+
+![](http://honorjoey.top/img/blog/paxos_11.jpg)<center>图4</center>
 
 - 当主节点接收到读请求后，处理就比较简单了，主节点只需要查询本地数据，然后返回给客户端就可以了：
 
-![image](https://static001.geekbang.org/resource/image/07/64/07501bb8d9015af3fb34cf856fe3ec64.jpg)<center>图5</center>
+<!-- ![image](https://static001.geekbang.org/resource/image/07/64/07501bb8d9015af3fb34cf856fe3ec64.jpg)<center>图5</center> -->
+
+![](http://honorjoey.top/img/blog/paxos_12.jpg)<center>图5</center>
 
 Chubby 的 Multi-Paxos 实现，尽管是一个闭源的实现，但这是 Multi-Paxos 思想在实际场景中的真正落地，Chubby 团队不仅编程实现了理论，还探索了如何补充细节。其中的思考和设计非常具有参考价值，不仅能帮助我们理解 Multi-Paxos 思想，还能帮助我们理解其他的 Multi-Paxos 算法（比如 Raft 算法）。
 
