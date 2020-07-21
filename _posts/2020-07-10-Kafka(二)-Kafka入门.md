@@ -15,7 +15,7 @@ tags:
 ### 安装与配置
 本节详细介绍 Kafka 运行环境的搭建，为了节省篇幅，本节的内容以 Linux CentOS 作为安装演示的操作系统，其他 Linux 系列的操作系统也可以参考本节的内容。具体的操作系统的信息如下：
 
-```
+```sh
 [root@node1 ~]# uname -a
 Linux node1 2.6.32-504.23.4.el6.x86_64 #1 SMP Tue Jun 9 20:57:37 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux
 [root@node1 ~]# cat /etc/issue
@@ -34,7 +34,7 @@ Kernel \r on an \m
 其次将/opt 目录下的安装包解压，相关信息如下：
 
 
-```
+```sh
 [root@node1 opt]# ll jdk-8u181-linux-x64.tar.gz 
 -rw-r--r-- 1 root root 185646832 Aug 31 14:48 jdk-8u181-linux-x64.tar.gz
 [root@node1 opt]# tar zxvf jdk-8u181-linux-x64.tar.gz 
@@ -59,7 +59,7 @@ export CLASSPATH=./://$JAVA_HOME/lib:$JRE_HOME/lib
 再执行 source /etc/profile 命令使配置生效，最后可以通过 java –version命令验证 JDK 是否已经安装配置成功。如果安装配置成功，则会正确显示出 JDK 的版本信息，参考如下：
 
 
-```
+```sh
 [root@node1 ~]# java -version
 java version "1.8.0_181"
 Java(TM) SE Runtime Environment (build 1.8.0_181-b13)
@@ -78,7 +78,7 @@ ZooKeeper 是一个开源的分布式协调服务，是 Google Chubby的一个�
 安装 ZooKeeper 的第一步也是下载相应的安装包，安装包可以从官网中获得，示例中使用的安装包是 zookeeper-3.4.12.tar.gz，同样将其复制到/opt 目录下，然后解压缩，参考如下：
 
 
-```
+```sh
 [root@node1 opt]# ll zookeeper-3.4.12.tar.gz 
 -rw-r--r-- 1 root root 36667596 Aug 31 15:55 zookeeper-3.4.12.tar.gz
 [root@node1 opt]# tar zxvf zookeeper-3.4.12.tar.gz 
@@ -91,7 +91,7 @@ ZooKeeper 是一个开源的分布式协调服务，是 Google Chubby的一个�
 第二步，向/etc/profile 配置文件中添加如下内容，并执行 source /etc/profile 命令使配置生效：
 
 
-```
+```sh
 export ZOOKEEPER_HOME=/opt/zookeeper-3.4.12
 export PATH=$PATH:$ZOOKEEPER_HOME/bin
 ```
@@ -99,7 +99,7 @@ export PATH=$PATH:$ZOOKEEPER_HOME/bin
 第三步，修改 ZooKeeper 的配置文件。首先进入$ZOOKEEPER_HOME/conf目录，并将zoo_sample.cfg 文件修改为 zoo.cfg：
 
 
-```
+```sh
 [root@node1 zookeeper-3.4.12]# cd conf
 [root@node1 conf]# cp zoo_sample.cfg zoo.cfg
 ```
@@ -107,7 +107,7 @@ export PATH=$PATH:$ZOOKEEPER_HOME/bin
 然后修改 zoo.cfg 配置文件，zoo.cfg 文件的内容参考如下：
 
 
-```
+```sh
 # ZooKeeper服务器心跳时间，单位为ms
 tickTime=2000
 # 允许follower连接并同步到leader的初始化连接时间，以tickTime的倍数来表示
@@ -126,7 +126,7 @@ clientPort=2181
 默认情况下，Linux 系统中没有/tmp/zookeeper/data 和/tmp/zookeeper/log 这两个目录，所以接下来还要创建这两个目录：
 
 
-```
+```sh
 [root@node1 conf]# mkdir -p /tmp/zookeeper/data
 [root@node1 conf]# mkdir -p /tmp/zookeeper/log
 ```
@@ -136,7 +136,7 @@ clientPort=2181
 第五步，启动 Zookeeper 服务，详情如下：
 
 
-```
+```sh
 [root@node1 conf]# zkServer.sh start
 JMX enabled by default
 Using config: /opt/zookeeper-3.4.6/bin/../conf/zoo.cfg
@@ -146,7 +146,7 @@ Starting zookeeper ... STARTED
 可以通过 zkServer.sh status 命令查看 Zookeeper 服务状态，示例如下：
 
 
-```
+```sh
 [root@node1 ]# zkServer.sh status
 JMX enabled by default
 Using config: /opt/zookeeper-3.4.12/bin/../conf/zoo.cfg
@@ -156,7 +156,7 @@ Mode: Standalone
 以上是关于 ZooKeeper 单机模式的安装与配置，一般在生产环境中使用的都是集群模式，集群模式的配置也比较简单，相比单机模式而言只需要修改一些配置即可。下面以3台机器为例来配置一个 ZooKeeper 集群。首先在这3台机器的 /etc/hosts 文件中添加3台集群的IP地址与机器域名的映射，示例如下（3个IP地址分别对应3台机器）：
 
 
-```
+```sh
 192.168.0.2 node1
 192.168.0.3 node2
 192.168.0.4 node3
@@ -165,7 +165,7 @@ Mode: Standalone
 然后在这3台机器的 zoo.cfg 文件中添加以下配置：
 
 
-```
+```sh
 server.0=192.168.0.2:2888:3888
 server.1=192.168.0.3:2888:3888
 server.2=192.168.0.4:2888:3888
@@ -178,7 +178,7 @@ server.2=192.168.0.4:2888:3888
 在安装完 JDK 和 ZooKeeper 之后，就可以执行 Kafka broker 的安装了，首先也是从官网中下载安装包，示例中选用的安装包是 kafka_2.11-2.0.0.tgz，将其复制至/opt 目录下并进行解压缩，示例如下：
 
 
-```
+```sh
 [root@node1 opt]# ll kafka_2.11-2.0.0.tgz 
 -rw-r--r-- 1 root root 55751827 Jul 31 10:45 kafka_2.11-2.0.0.tgz
 [root@node1 opt]# tar zxvf kafka_2.11-2.0.0.tgz
@@ -191,7 +191,7 @@ server.2=192.168.0.4:2888:3888
 接下来需要修改 broker 的配置文件 $KAFKA_HOME/conf/server.properties。主要关注以下几个配置参数即可：
 
 
-```
+```sh
 # broker的编号，如果集群中有多个broker，则每个broker的编号需要设置的不同
 broker.id=0
 # broker对外提供的服务入口地址
@@ -207,14 +207,14 @@ zookeeper.connect=localhost:2181/kafka
 启动 Kafka 服务的方式比较简单，在$KAFKA_HOME 目录下执行下面的命令即可：
 
 
-```
+```sh
 bin/kafka-server-start.sh config/server.properties
 ```
 
 如果要在后台运行 Kafka 服务，那么可以在启动命令中加入 -daemon 参数或&字符，示例如下：
 
 
-```
+```sh
 bin/kafka-server-start.sh –daemon config/server.properties
 # 或者
 bin/kafka-server-start.sh config/server.properties &
@@ -223,7 +223,7 @@ bin/kafka-server-start.sh config/server.properties &
 可以通过 jps 命令查看 Kafka 服务进程是否已经启动，示例如下：
 
 
-```
+```sh
 [root@node1 kafka_2.11-2.0.0]# jps -l
 23152 sun.tools.jps.Jps
 16052 org.apache.zookeeper.server.quorum.QuorumPeerMain
@@ -239,7 +239,7 @@ jps 命令只是用来确认 Kafka 服务的进程已经正常启动。它是否
 Kafka 提供了许多实用的脚本工具，存放在 $KAFKA_HOME 的 bin 目录下，其中与主题有关的就是 kafka-topics.sh 脚本，下面我们用它演示创建一个分区数为4、副本因子为3的主题 topic-demo，示例如下（Kafka集群模式下，broker数为3）：
 
 
-```
+```sh
 [root@node1 kafka_2.11-2.0.0]# bin/kafka-topics.sh --zookeeper localhost: 2181/kafka --create --topic topic-demo --replication-factor 3 --partitions 4
 
 Created topic "topic-demo".
@@ -250,7 +250,7 @@ Created topic "topic-demo".
 还可以通过 --describe 展示主题的更多具体信息，示例如下：
 
 
-```
+```sh
 [root@node1 kafka_2.11-2.0.0]# bin/kafka-topics.sh --zookeeper localhost: 2181/kafka --describe --topic topic-demo
 
 Topic:topic-demo	PartitionCount:4	ReplicationFactor:3	Configs:
@@ -263,7 +263,7 @@ Topic:topic-demo	PartitionCount:4	ReplicationFactor:3	Configs:
 创建主题 topic-demo 之后我们再来检测一下 Kafka 集群是否可以正常地发送和消费消息。$KAFKA_HOME/bin 目录下还提供了两个脚本 kafka-console-producer.sh 和 kafka-console- consumer.sh，通过控制台收发消息。首先我们打开一个 shell 终端，通过 kafka-console-consumer.sh 脚本来订阅主题 topic-demo，示例如下：
 
 
-```
+```sh
 [root@node1 kafka_2.11-2.0.0]# bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic topic-demo
 ```
 
@@ -272,7 +272,7 @@ Topic:topic-demo	PartitionCount:4	ReplicationFactor:3	Configs:
 我们再打开一个 shell 终端，然后使用 kafka-console-producer.sh 脚本发送一条消息“Hello, Kafka!”至主题 topic-demo，示例如下：
 
 
-```
+```sh
 [root@node1 kafka_2.11-2.0.0]# bin/kafka-console-producer.sh --broker-list localhost:9092 --topic topic-demo
 >Hello, Kafka!
 >
@@ -281,7 +281,7 @@ Topic:topic-demo	PartitionCount:4	ReplicationFactor:3	Configs:
 其中 --broker-list 指定了连接的 Kafka 集群地址，--topic 指定了发送消息时的主题。示例中的第二行是通过人工键入的方式输入的，按下回车键后会跳到第三行，即“>”字符处。此时原先执行 kafka-console-consumer.sh 脚本的 shell 终端中出现了刚刚输入的消息“Hello, Kafka!”，示例如下：
 
 
-```
+```sh
 [root@node1 kafka_2.11-2.0.0]# bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic topic-demo
 Hello, Kafka!
 ```
@@ -289,7 +289,7 @@ Hello, Kafka!
 读者也可以通过输入一些其他自定义的消息来熟悉消息的收发及这两个脚本的用法。不过这两个脚本一般用来做一些测试类的工作，在实际应用中，不会只是简单地使用这两个脚本来做复杂的与业务逻辑相关的消息生产与消费的工作，具体的工作还需要通过编程的手段来实施。下面就以 Kafka 自身提供的 Java 客户端来演示消息的收发，与 Kafka 的 Java 客户端相关的 Maven 依赖如下：
 
 
-```
+```xml
 <dependency>
     <groupId>org.apache.kafka</groupId>
     <artifactId>kafka-clients</artifactId>
@@ -302,7 +302,7 @@ Hello, Kafka!
 具体的示例如代码清单2-1 所示，与脚本演示时一样，示例中仅发送一条内容为“Hello, Kafka!”的消息到主题 topic-demo。
 
 
-```
+```java
 //代码清单2-1 生产者客户端示例代码
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -339,7 +339,7 @@ public class ProducerFastStart {
 对应的消费消息也比较简单，首先创建一个消费者客户端实例并配置相应的参数，然后订阅主题并消费即可，具体的示例代码如代码清单2-2所示。
 
 
-```
+```java
 //代码清单2-2 消费者客户端示例代码
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
